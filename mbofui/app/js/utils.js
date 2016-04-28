@@ -1,6 +1,8 @@
 'use strict';
-/* global $, _ */
+/* global $, _, document */
 
+// register a vote
+// TODO: rewrite the angular way and hook it up to the UI
 var vote = function(e) {
     var $thisTarget = $(e.target);
     if ($thisTarget.hasClass("glyphicon")) {
@@ -23,6 +25,7 @@ var vote = function(e) {
     });
 };
 
+// util to turn result of requesting event collection into leaflet attr naming scheme
 var leafletize = function(data){
   var leafletList = [];
   _.each(data.data, function(event){
@@ -43,7 +46,7 @@ var leafletize = function(data){
     return leafletList;
 };
 
-
+// placeholder
 var resolveCategory = function ( category ) {
   if ( category ) {
     return '<strong>' + category + '</strong>';
@@ -52,6 +55,9 @@ var resolveCategory = function ( category ) {
   }
 };
 
+// given an event category, style the marker
+// TODO: what to do in the case of multiple categories
+// if this happens
 var resolveIcon = function ( category ) {
   return ( {
     'cat1': {
@@ -76,6 +82,7 @@ var resolveIcon = function ( category ) {
   } );
 };
 
+
 // new event validation - either the dates are blank or wrong or the description is blank
 var validate = function(data) {
   //init array
@@ -93,8 +100,8 @@ var validate = function(data) {
   }
 };
 
-
-
+// construct a DOM element that gets added to popup invitations
+// TODO: placeholder - need to use a directive with an actual template
 var popupLink = document.createElement('a');
 popupLink.setAttribute('data-toggle','modal');
 popupLink.setAttribute('data-target','#bofModal');
