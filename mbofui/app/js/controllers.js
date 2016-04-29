@@ -159,7 +159,7 @@ ocellus.controller('mapController', ['$scope', '$rootScope','$filter', '$timeout
   $scope.$watch("markers", function() {
     $scope.$watch('markerFilter', function(text) {
       $scope.markersFiltered = $filter('filter')($scope.markers, {
-        event: text
+        message: text
       });
     });
   }, true);
