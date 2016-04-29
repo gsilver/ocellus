@@ -77,10 +77,15 @@ ocellus.controller('mapController', ['$scope', '$rootScope','$filter', '$timeout
     var startTime = moment($('#startTime').val()).format($rootScope.time_format);
     var endTime = moment($('#endTime').val()).format($rootScope.time_format);
     var postingTime = moment().format($rootScope.time_format);
+    var category_key = $('#category option:selected').val();
+    var category_text = $('#category option:selected').text();
+    var category_object = JSON.stringify({'category_key':category_key, 'category_text':category_text});
+    $log.info(category_object);
     var data = {
       "eventText": $scope.newEventText,
       "startTime": startTime,
       "endTime": endTime,
+      "category":category_key,
       "latitude": coords[0],
       "longitude": coords[1],
       "altitudeMeters": 266.75274658203125, //this is being removed but the database still expects it
@@ -95,14 +100,10 @@ ocellus.controller('mapController', ['$scope', '$rootScope','$filter', '$timeout
         var newMarker = {
           lat: result.data.latitude,
           lng: result.data.longitude,
-          category: 'cat1',
-          event: result.data.eventText,
+          category: result.data.category,
+          message: result.data.eventText,
           layer: 'events',
-          icon: {
-            type: 'awesomeMarker',
-            icon: 'record',
-            markerColor: 'blue'
-          }
+          icon: resolveIcon(result.data.category)
         };
         //add the event marker to both filtered and unfiltered collections
         $scope.markersAll.push(newMarker);
@@ -145,10 +146,11 @@ ocellus.controller('mapController', ['$scope', '$rootScope','$filter', '$timeout
           lat: parseFloat(events[i].lat),
           lng: parseFloat(events[i].lng),
           category: events[i].category,
-          message: events[i].category + '<br> ' + events[i].message,
+          message: events[i].category + events[i].message,
           layer: 'events',
           icon: events[i].icon
         };
+
         $scope.markersAll.push(newMarker);
         $scope.markers.push(newMarker);
       }

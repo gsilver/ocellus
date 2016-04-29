@@ -29,10 +29,10 @@ var leafletize = function(data){
     leafletList.push({
       lat: event.latitude,
       lng: event.longitude,
-      category: event.category || 'cat1',
+      category: resolveCategory(event.category),
       message:event.eventText,
       layer: 'bofs',
-      icon: resolveIcon( 'cat1' ),
+      icon: resolveIcon(event.category),
       endTime: event.endTime,
       startTime: event.startTime,
       hashTag: event.hashtag,
@@ -46,7 +46,7 @@ var leafletize = function(data){
 
 var resolveCategory = function ( category ) {
   if ( category ) {
-    return '<strong>' + category + '</strong>';
+    return '<strong>' + category + '</strong><br>';
   } else {
     return '';
   }
