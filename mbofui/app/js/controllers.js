@@ -48,7 +48,60 @@ ocellus.controller('mapController', ['$compile', '$scope', '$rootScope','$filter
       },
     }
   });
-
+$scope.myEvents = leafletize([{
+    "url": "http://localhost:18000/api/events/103/",
+    "eventText": "now",
+    "latitude": 42.273339529351894,
+    "longitude": -83.74736309051514,
+    "altitudeMeters": 266.75274658203125,
+    "owner": "http://localhost:18000/api/users/bjensen/",
+    "postingTime": "2016-05-23T17:16:31.721732Z",
+    "startTime": "2016-01-01T06:00:00Z",
+    "endTime": "2016-12-31T17:59:00Z",
+    "hashtag": null,
+    "votes": 0,
+    "category": "Course/Class"
+  }, {
+    "url": "http://localhost:18000/api/events/105/",
+    "eventText": "qwsqwsqws",
+    "latitude": 42.27246626192837,
+    "longitude": -83.75167608261108,
+    "altitudeMeters": 266.75274658203125,
+    "owner": "http://localhost:18000/api/users/bjensen/",
+    "postingTime": "2016-05-23T17:18:04.183616Z",
+    "startTime": "2016-05-24T05:00:00Z",
+    "endTime": "2016-12-31T17:59:00Z",
+    "hashtag": null,
+    "votes": 0,
+    "category": "Public Ceremony"
+  }, {
+    "url": "http://localhost:18000/api/events/108/",
+    "eventText": "qwdqwdqwd",
+    "latitude": 42.2708943500754,
+    "longitude": -83.74656915664673,
+    "altitudeMeters": 266.75274658203125,
+    "owner": "http://localhost:18000/api/users/bjensen/",
+    "postingTime": "2016-05-24T14:31:32.577580Z",
+    "startTime": "2016-05-24T14:31:00Z",
+    "endTime": "2016-05-29T02:00:00Z",
+    "hashtag": null,
+    "votes": 0,
+    "category": "Business/Networking"
+  }, {
+    "url": "http://localhost:18000/api/events/109/",
+    "eventText": "qwqwd",
+    "latitude": 42.2697137,
+    "longitude": -83.7470777,
+    "altitudeMeters": 266.75274658203125,
+    "owner": "http://localhost:18000/api/users/bjensen/",
+    "postingTime": "2016-05-24T14:35:21.766263Z",
+    "startTime": "2016-05-24T18:00:00Z",
+    "endTime": "2016-05-25T18:00:00Z",
+    "hashtag": null,
+    "votes": 0,
+    "category": "Practice/Rehearsal"
+  }]
+);
   // displays a popup invitation on current location regardless of where the map viewport is at
   // viewport will shift to center on user current location and open a popup invitation
   $scope.createEventCurrentlocation = function() {
@@ -219,14 +272,14 @@ ocellus.controller('mapController', ['$compile', '$scope', '$rootScope','$filter
 
   getEvents('/api/events/current/');
 
-  $(function() {
-    $('#eventSwitch').change(function() {
-      if ($(this).prop('checked')) {
-        getEvents('/api/events/current/');
-      } else {
-        getEvents('/api/events/upcoming/');
-      }
-    });
-  });
+  $scope.showMyEvents = function () {
+    $rootScope.currentView= 'My Events';
+    $('#myEventsModal').modal({});
+  };
+
+  $scope.switchViews = function (url, title) {
+    $rootScope.currentView= title;
+    getEvents(url);
+  };
 
 }]);

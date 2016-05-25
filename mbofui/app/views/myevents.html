@@ -1,0 +1,14 @@
+<ul class="list-group">
+  <li class="list-group-item" ng-repeat="event in myEvents">
+    <h5>
+      {{event.category}}
+    </h5>
+    <div class="">
+      {{event.message}}
+    </div>
+    <div class="">
+      <small>{{event.startTime | date:'MM/dd h:mma'}} - {{event.endTime | date:'MM/dd h:mma'}}</small>
+    </div>
+
+  </li>
+</ul>
