@@ -265,10 +265,20 @@ $scope.myEvents = leafletize([{
 
   // clean up modal's form elems when modal closes
   $('#bofModal').on('hide.bs.modal', function () {
+    $log.info('dismissing modal');
     $scope.selected_category ='';
+    $rootScope.currentView = 'Current';
+    getEvents('/api/events/current/');
     $('.form-group').removeClass('has-error');
     $('#eventText, #startTime, #endTime').val('');
   });
+  // reset data and view to /current on myevents modal dismiss
+  $('#myEventsModal').on('hide.bs.modal', function () {
+    $rootScope.currentView = 'Current';
+    getEvents('/api/events/current/');
+  });
+
+
 
   getEvents('/api/events/current/');
 
