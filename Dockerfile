@@ -35,7 +35,7 @@ RUN npm install -g grunt-cli
 RUN npm install --global grunt
 
 RUN echo '{ "allow_root": true }' > /root/.bowerrc
-RUN cd mbofui && bower install && npm install && grunt --gruntfile Gruntfile-docker.js
+RUN cd mbofui && bower install && npm install && grunt prod
 #RUN cd /usr/local/ocellus/mbofui/ && bower install ui-leaflet
 
 EXPOSE 8000

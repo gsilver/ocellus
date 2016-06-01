@@ -65,6 +65,6 @@ EOM
     config.vm.provision "shell", run: 'always',inline: <<-SHELL2
     cd /vagrant/mbofui
     npm install
-    grunt --gruntfile Gruntfile-vagrant.js
+    grunt dev
     SHELL2
 end
