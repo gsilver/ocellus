@@ -51,7 +51,6 @@ EOM
         pip install coverage
         pip install -r requirements.txt
 
-        echo "Installing Bower..."
         cd /vagrant
         apt-get update
         apt-get install --yes git
@@ -59,12 +58,7 @@ EOM
         apt-get install --yes nodejs
         npm install --global npm@latest
         npm install --global bower
-        npm install -g grunt-cli
         npm install --global grunt
+        npm install -g grunt-cli
     SHELL
-    config.vm.provision "shell", run: 'always',inline: <<-SHELL2
-    cd /vagrant/mbofui
-    npm install
-    grunt dev
-    SHELL2
 end

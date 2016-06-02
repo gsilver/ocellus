@@ -6,7 +6,7 @@
   "license":"(MIT OR Apache-2.0)",
   "repository":"https://github.com/tl-its-umich-edu/ocellus",
   "devDependencies": {
-    "grunt": "~0.4.4",
+    "grunt": "latest",
     "grunt-contrib-jshint": "latest",
     "jshint-stylish": "latest",
     "grunt-contrib-uglify": "latest",
