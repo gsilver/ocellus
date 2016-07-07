@@ -153,9 +153,13 @@ ocellus.controller('mapController', ['$compile', '$scope', '$rootScope','$filter
     if (key === 'all') {
       // set marker to unfiltered list
       $scope.markers = $scope.markersAll;
+      $scope.textEvents = $scope.textEventsAll;
     } else {
       // use a filter to only show the selected category
       $scope.markers = $filter('filter')($scope.markersAll, {
+        category: key
+      });
+      $scope.textEvents = $filter('filter')($scope.textEventsAll, {
         category: key
       });
     }
@@ -167,10 +171,13 @@ ocellus.controller('mapController', ['$compile', '$scope', '$rootScope','$filter
   var getEvents = function(url) {
     $scope.markersAll = [];
     $scope.markers = [];
+    $scope.textEvents = [];
+    $scope.textEventsAll =[];
     var bofsUrl = url;
     // use a promise factory to do request
     Bof.GetBofs(bofsUrl).then(function(eventsList) {
-
+      $scope.textEventsAll = eventsList;
+      $scope.textEvents = eventsList;
       $rootScope.events=eventsList;
       // wish there was a better way to display a collection
       // TODO: align property names (db, json response and marker definition) so that we are not doing so much reformating
@@ -181,6 +188,7 @@ ocellus.controller('mapController', ['$compile', '$scope', '$rootScope','$filter
           url: eventsList[i].url,
           category: eventsList[i].category,
           messageSearch: eventsList[i].category + ' ' + eventsList[i].message,
+          messagePlain: eventsList[i].message,
           message: "<popup event='events[" + i + "]'></popup>",
           //message:dateDisplayD,
           layer: 'events',
@@ -235,8 +243,9 @@ ocellus.controller('mapController', ['$compile', '$scope', '$rootScope','$filter
     getEvents(url);
   };
 
-  $(document).on('click','#editEvent',function(e) {
-    var event = JSON.parse($('#editEvent').attr('data-event'));
+  $(document).on('click','.editEvent',function(e) {
+    console.log('am edt');
+    var event = JSON.parse($(this).attr('data-event'));
     var thisEvent = _.findWhere($rootScope.events, {url: event.url});
     // the event is stale (it has expired while user was looking at it)
     if(moment(event.endTime).isBefore()){

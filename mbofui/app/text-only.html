@@ -67,15 +67,27 @@
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
   </nav>
-
-<ul>
-  <li ng-repeat="event in markers">
-    {{event.category}}<br>
-    {{event.message}}
-    {{event}}
+<ul class="list-group">
+  <li ng-repeat="event in textEvents" class="list-group-item">
+    <div class="row">
+      <div class="col-lg-8">
+        <h4 class="list-group-item-heading">{{event.category}}</h4>
+        <p class="list-group-item-text">
+          <small>{{event.dateBlob}}</small>
+        </p>
+        <p class="list-group-item-text">
+          {{event.message}}
+        </p>
+      </div>
+      <div class="col-lg-4">
+        <button data-event="{{event}}" ng-if="event.mine && event.inTime" type="button" class="btn btn-primary pull-right editEvent" ng-click="">Edit</button>
+      </div>
+    </div>
+    <p>
+      {{event}}
+    </p>
   </li>
 </ul>
-
 
   <!-- Create Modal -->
   <div class="modal fade" id="bofModal" tabindex="-1" role="dialog" aria-labelledby="bofModalLabel">
