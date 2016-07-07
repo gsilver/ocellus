@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html ng-app="ocellus">
+
+<head>
+  <meta charset="utf-8">
+  <title>Ocellus
+  </title>
+  <link rel="shortcut icon" type="image/png" href="images/favicon.png"/>
+  <link rel="apple-touch-icon" href="images/apple-touch-icon-180x180.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/custom.css" media="screen" title="no title" charset="utf-8">
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" media="screen" title="no title" charset="utf-8">
+</head>
+
+<body ng-controller="mapController">
+
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <span class="navbar-brand" href="#">{{strings.app_name}}  <a href="" ng-click="createEventCurrentlocation()" title="{{strings.app_action}}" style="font-size:20px"><i class="glyphicon glyphicon-map-marker"></i></a></span>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{strings.app_categories}} <span class="caret"></span></a>
+            <ul class="dropdown-menu" id="categories">
+              <li ng-repeat="category in event_categories"><a href="#" ng-click="filter_category(category)">{{category}}</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#" ng-click="filter_category('all')">All {{strings.app_categories}}</a></li>
+            </ul>
+          </li>
+
+        </ul>
+        <form class="navbar-form navbar-left" role="search">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search" value="" ng-model="markerFilter">
+          </div>
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Showing {{currentView}} <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="" ng-click="switchViews('/api/events/current/','Current')">Current</a></li>
+              <li><a href="" ng-click="switchViews('/api/events/upcoming/','Upcoming')">Upcoming</a></li>
+              <!--// display a list of events organized by user or for which user has said she has an intention
+              commented out as it is in V2.
+               TBD: are there any time filters at play here
+              <li><a href="" ng-click="showMyEvents()">My events</a></li>
+              -->
+              <li role="separator" class="divider"></li>
+              <li><a>Current center: <strong>{{center.lat}} {{center.lng}}</strong> </a></li>
+              <li><a>Markers: <strong>{{markersAll.length}}</strong></a></li>
+              <li><a>Cat Filtered Markers: <strong>{{markers.length}}</strong></a></li>
+              <li><a>Search Filtered Markers: <strong>{{markersFiltered.length}}</strong></a></li>
+            </ul>
+          </li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+<ul>
+  <li ng-repeat="event in markers">
+    {{event.category}}<br>
+    {{event.message}}
+    {{event}}
+  </li>
+</ul>
+
+
+  <!-- Create Modal -->
+  <div class="modal fade" id="bofModal" tabindex="-1" role="dialog" aria-labelledby="bofModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="bofModalLabel">{{strings.modal_title}}</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group eventText">
+            <label for="eventText">{{strings.modal_description}}</label>
+            <span class="req-text">(required)</span>
+            <textarea ng-model="newEventText" class="form-control" id="eventText" rows="3" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="category">{{strings.app_categories}}</label>
+            <select ng-model="selected_category" ng-options="item as item for item in event_categories" class="form-control">
+                <option value="">---Please select---</option>
+            </select>
+
+          </div>
+
+          <div class="form-group backwardsTime alert-inline" style="display:none">
+            Cannot have an event that starts after it ends.
+          </div>
+          <div class="form-group startTime">
+            <label for="startTime">{{strings.modal_starttime}}</label>
+            <span class="req-text">(required)</span>
+            <input id="startTime" name="startTime" min="" class="form-control" type="datetime-local">
+          </div>
+          <div class="form-group endTime">
+            <label for="endTime">{{strings.modal_endtime}}</label>
+            <span class="req-text">(required)</span><span class="endToSoon alert-inline" style="display:none">&nbsp;&nbsp;Cannot end events in the past.</span>
+            <input id="endTime" name="endTime" min="" class="form-control" type="datetime-local">
+          </div>
+          <div class="form-group hashTagAndAddess">
+            <label for="hashtag" class="sr-only">Hashtags</label>
+            <input id="hashtag" name="hashtag"  class="form-control" type="text" placeholder="Hashtags">
+          </div>
+          <label for="address" class="sr-only">Address</label>
+          <div class="input-group address">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="button" ng-click="lookUpAddress('google')">Google</button>
+            </span>
+            <input id="address" name="address"  class="form-control" type="text" placeholder="Address">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="button" ng-click="lookUpAddress('openstreet')">Open Street</button>
+            </span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="postBof">{{strings.modal_post}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal fade" id="bofModalEdit" tabindex="-1" role="dialog" aria-labelledby="bofModalEditLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="bofModalEditLabel">Edit Event</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group eventText">
+            <label for="eventTextEdit">{{strings.modal_description}}</label>
+            <span class="req-text">(required)</span>
+            <textarea class="form-control" id="eventTextEdit" rows="3" required ng-model="editEvent.message"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="categoryEdit">{{strings.app_categories}}</label>
+            <select ng-model="editEvent.category" class="form-control" id="categoryEdit">
+              <option> -- select a category -- </option>
+              <option ng-repeat="category in event_categories" value="{{category}}">{{category}}</option>
+            </select>
+
+          </div>
+
+          <div class="form-group backwardsTime alert-inline" style="display:none">
+            Cannot have an event that starts after it ends.
+          </div>
+          <div class="form-group startTime">
+            <label for="startTimeEdit">{{strings.modal_starttime}}</label>
+            <span class="req-text">(required)</span>
+            <input id="startTimeEdit" value="" name="startTime" min="" class="form-control" type="datetime-local">
+          </div>
+          <div class="form-group endTime">
+            <label for="endTimeEdit">{{strings.modal_endtime}}</label>
+            <span class="req-text">(required)</span><span class="endToSoon alert-inline" style="display:none">&nbsp;&nbsp;Cannot end events in the past.</span>
+            <input id="endTimeEdit" value="" name="endTime" min="" class="form-control" type="datetime-local">
+          </div>
+        </div>
+        <div class="modal-footer container-flex">
+          <div class="row">
+            <div class="col-lg-6">
+              <button type="button" class="btn btn-danger pull-left" ng-click="eventEditCancel()">Cancel Event</button>
+            </div>
+            <div class="col-lg-6">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" ng-click="eventEditPost()">Save Event</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- My Events Modal -->
+  <div class="modal fade" id="myEventsModal" tabindex="-1" role="dialog" aria-labelledby="myEventsLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myEventsLabel">My Events</h4>
+        </div>
+        <div class="modal-body">
+          <div ng-include="'views/myevents.html'">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- libraries -->
+  <script src="bower_components/leaflet/dist/leaflet.js"></script>
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-simple-logger/dist/angular-simple-logger.min.js">
+  </script>
+  <script src="bower_components/jquery/jquery.min.js"></script>
+  <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="bower_components/leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
+  <script src="bower_components/ui-leaflet/dist/ui-leaflet.min.js"></script>
+  <script src="bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers.min.js"></script>
+  <script src="bower_components/underscore/underscore-min.js"></script>
+  <script src="bower_components/moment/min/moment.min.js"></script>
+  <script src="bower_components/webshim/js-webshim/minified/polyfiller.js"></script>
+  <!-- grunt concatenated app files -->
+  <script src="js/dist/all.min.js"></script>
+
+
+
+</body>
+
+</html>
