@@ -1,5 +1,5 @@
 /*jshint strict:false */
-ocellus.directive('popup', ['$http', '$compile', 'Bof', function($http, $compile, Bof) {
+ocellus.directive('popup', [function() {
     return {
         restrict: 'E',
         scope: {
