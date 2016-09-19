@@ -20,20 +20,56 @@ body {
   padding-top:50px
 }
 
+nav.navbar {
+  background:#00274c
+}
+.navbar-default .navbar-brand {
+  color: #fff !important;
+}
+
+.navbar-default a.dropdown-toggle, .plainLink {
+  color: #fff !important
+}
+
+.navbar-default a.dropdown-toggle:focus, .plainLink:focus {
+  outline: 1px dotted #fff
+}
+
+.navbar-default .dropdown.open > a{
+  color: #000 !important;
+  background: #ffcb05 !important;
+  outline:none;
+}
+
+.dropdown-menu a {
+  color:#000
+}
 .logo-login {
   display: flex;
   flex-direction: column;
  justify-content: center;
 }
-.logo-peacock {
+.logo {
   position: absolute;
   top: 15%;
-  width:100%;
+  right:20%;
+  left:20%;
+  width:auto;
   z-index: 1;
-  background:transparent url(../images/peacock-head2.png) top center no-repeat;
-  height:350px;
-  padding-top:300px;
+  background:#fff url(../images/clogo.png) 25% 10% no-repeat;
+  height:220px;
+  padding-top:120px;
   text-align:center;
+  outline:1px solid #ccc;
+}
+
+.navbar-brand {
+  background:transparent url(../images/cheader.png)  10px 6px  no-repeat;
+  width:125px;
+  padding-left:57px !important
+}
+.navbar-default .navbar-nav .open .dropdown-menu > li > a {
+  color:#000 !important 
 }
 
 .status {

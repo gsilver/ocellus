@@ -28,7 +28,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <span class="navbar-brand" href="#">Ocellus</span>
+        <span class="navbar-brand">Ocellus</span>
       </div>
 
 
@@ -53,7 +53,7 @@
               <li><a href="#" ng-click="filter_category('all')">All categories</a></li>
             </ul>
           </li>
-          <li ng-show="category" class="visible-lg-inline visible-md-inline"><p class="navbar-text">Showing: {{category}}</p></li>
+          <li ng-show="category" class="visible-lg-inline visible-md-inline"><p class="navbar-text plainLink">Showing: {{category}}</p></li>
         </ul>
         <form class="navbar-form navbar-left" role="search">
           <div class="form-group">
@@ -63,7 +63,7 @@
         </form>
 
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="" ng-click="switchModes('text')">Text only</a></li>
+          <li><a href="" ng-click="switchModes('text')" class="plainLink">Text only</a></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Showing {{currentView}} <span class="caret"></span></a>
             <ul class="dropdown-menu">
@@ -94,7 +94,7 @@
     </div>
 
     <div ng-show="!loggedin" class="logo-login">
-      <div class="logo-peacock">
+      <div class="logo">
         <a class="btn btn-lg btn-um" style="font-size:35px" onclick="window.location.href='/accounts/login/'">Login</a>
       </div>
     </div>
