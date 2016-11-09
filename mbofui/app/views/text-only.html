@@ -1,0 +1,199 @@
+
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation" ng-show="loggedin">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#ocellusNav" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <span class="navbar-brand">Ocellus</span>
+      </div>
+
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="ocellusNav">
+        <ul class="nav navbar-nav">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Create Event <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li> <a href="" ng-click="createEventCurrentlocation('text')" title="Create event at current location">Create event at current location</a></li>
+              <li><a href="" data-toggle="modal" data-target="#coordsLookUpModal" title="Create event at specified address">Create event at specified address</a></li>
+            </ul>
+          </li>
+          <li><a href="" title="Map view" ng-click="switchModes('map')" class="plainLink">Map</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{category || 'All Events'}}
+              <span ng-show="category && category !=='All Events'"> Events</span>
+              <span class="caret"></span></a>
+            <ul class="dropdown-menu" id="categories">
+              <li ng-repeat="category in event_categories"><a href="#" ng-click="filter_category(category)">{{category}}</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#" ng-click="filter_category('All Events')">All Events</a></li>
+            </ul>
+          </li>
+          <li>
+            <form class="navbar-form navbar-left" role="search">
+              <div class="form-group">
+                <label for="searchText" class="sr-only">Search events</label>
+                <input  id="searchText" type="text" class="form-control" placeholder="Search" value="" ng-model="textEventsFilter">
+              </div>
+            </form>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Showing {{currentView}} <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="" ng-click="switchViews('/api/events/current/','current')">Current</a></li>
+              <li><a href="" ng-click="switchViews('/api/events/upcoming/','upcoming')">Upcoming</a></li>
+              <!--// display a list of events organized by user or for which user has said she has an intention
+              commented out as it is in V2.
+               TBD: are there any time filters at play here
+              <li><a href="" ng-click="showMyEvents()">My events</a></li>
+              -->
+              <!--
+              <li role="separator" class="divider"></li>
+              <li><a>Current center: <strong>{{center.lat}} {{center.lng}}</strong> </a></li>
+              <li><a>Markers: <strong>{{markersAll.length}}</strong></a></li>
+              <li><a>Cat Filtered Markers: <strong>{{markers.length}}</strong></a></li>
+              <li><a>Search Filtered Markers: <strong>{{markersFiltered.length}}</strong></a></li>
+              -->
+            </ul>
+          </li>
+          <li class="visible-xs-block"><a class="plainLink" href="#"  ng-click="logout()">Logout</a></li>
+          <li class="dropdown hidden-xs" >
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span> <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#"  ng-click="logout()">Logout</a></li>
+            </ul>
+          </li>
+
+        </ul>
+      </div>
+      <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+  </nav>
+  <div class="overlay" ng-hide="online">
+  </div>
+  <div  class="alert alert-danger alertPanel" ng-hide="online" ng-cloak>You are offline</div>
+  <div class="alert {{alert.type}} alert-dismissible alertPanel" role="alert" ng-show="alert">
+    <button type="button" class="close" aria-label="Close" ng-click="dismissAlert()"><span aria-hidden="true">&times;</span></button>
+    <p ng-hide="alert.type !=='alert-danger'">
+      An error has occurred. Please contact your System Administrator for assistance.
+    </p>
+    <small>{{alert.message}}</small>
+  </div>
+  <div ng-show="!loggedin" class="logo-login">
+    <div class="splash visible-md-block visible-lg-block visible-sm-block">
+      <a class="btn btn-lg btn-um" style="font-size:25px" onclick="window.location.href='/accounts/login/'">Login</a>
+    </div>
+    <div class="splash splash-small visible-xs-block">
+      <a class="btn btn-lg btn-um" style="font-size:25px" onclick="window.location.href='/accounts/login/'">Login</a>
+    </div>
+  </div>
+  <div role="main" ng-show="loggedin">
+    <div id="text_only"></div>
+    <div class="alert alert-info" style="margin:10px" ng-show="!textEvents.length" ng-cloak  ng-hide="!online">
+      No {{currentView | lowercase}} {{selectedCategory}} events available.
+    </div>
+    <div style="margin:0;" >
+      <div class="container-fluid" ng-repeat="event in textEvents  | orderBy:'startTime'">
+        <div class="row" style="border-top:1px solid #ccc;padding-top:10px">
+          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <h4 class="list-group-item-heading">{{event.title}}</h4>
+            <p class="list-group-metadata">
+              {{event.category}}
+            </p>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="text-align:right">
+            xxxx
+            <div ng-show="event.owner==='False' && event.inTime && event.intention">
+              <div class="btn-group btn-group-sm">
+                <a href="" ng-if="(event.intention.intention !=='going' || event.intention.intention==='declined') && event.inTime" class="btn btn-primary declareIntentPut" style="color:#fff"  data-intention="going" data-event="{{event.url}}" data-respondent="{{event.intention.respondent}}" data-intention-url="{{event.intention.url}}">
+                  Going
+                </a>
+                <a href="" ng-if="(event.intention.intention==='going'  || event.intention.intention==='declined') && event.inTime" class="btn btn-default declareIntentPut" data-intention="maybe" data-event="{{event.url}}" data-respondent="{{event.intention.respondent}}" data-intention-url="{{event.intention.url}}">
+                  Maybe
+                </a>
+                <a href="" ng-if="(event.intention.intention==='going' || event.intention.intention==='maybe') && event.inTime && !event.confirmDeclined"
+                  class="btn btn-warning declareIntentPut"
+                  data-intention="declinedConfirm"
+                  data-event="{{event.url}}"
+                  data-respondent="{{event.intention.respondent}}"
+                  data-intention-url="{{event.intention.url}}"
+                 >
+                  Not
+                </a>
+                <a href=""
+                  class="btn btn-danger declareIntentPut"
+                  ng-if="(event.intention.intention==='going' || event.intention.intention==='maybe') && event.inTime && event.confirmDeclined"
+                  class="btn btn-danger declareIntentPut"
+                  data-intention="declined"
+                  data-event="{{event.url}}"
+                  data-respondent="{{event.intention.respondent}}"
+                  data-intention-url="{{event.intention.url}}"
+                >
+                  Confirm
+                </a>
+              </div>
+            </div>
+            <div class="btn-group btn-group-sm" ng-show="event.owner==='False'  && !event.intention && event.inTime"  style="text-align:right">
+              <a href="" class="btn btn-primary declareIntentPost" style="color:#fff"  data-intention="going" data-event="{{event.url}}" data-method="POST">
+                Going
+              </a>
+              <a href="" class="btn btn-default declareIntentPost" data-intention="maybe" data-event="{{event.url}}">
+                Maybe
+              </a>
+            </div>
+            <div class="btn-group btn-group-sm" ng-show="event.owner==='True' && event.inTime">
+              <a data-toggle="modal" data-target="#bofModalEdit" data-event="{{event}}" role="button" href="" class="btn btn-primary editEvent" style="color:#fff" >
+                Edit
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="row" style="padding-bottom:15px;">
+          <!-- <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+          </div> -->
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="overflow:hidden">
+            <div class="list-group-metadata">
+              {{event.address}}
+            </div>
+
+            <p>
+              <small>{{event.dateBlob}}</small>
+            </p>
+            <p ng-show="event.hashTag">
+              <strong class="muted">{{event.hashTag}}</strong>
+            </p>
+            <p ng-show="event.guests !==0" class="list-group-item-text">
+              <span class="badge badge-default">{{event.guests}} </span> <span ng-show="event.guests === 1">has </span> <span ng-show="event.guests > 1">have</span> signed up.
+              <span ng-show="event.definitely !==0 && event.definitely">
+                {{event.definitely}} definitely.
+              </span>
+              <span ng-show="event.maybe !==0 && event.maybe">
+                {{event.maybe}} tentatively.
+              </span>
+            </p>
+            <p ng-show="event.guests ===0" class="list-group-item-text">
+              No one has signed up yet.
+            </p>
+            <p ng-show="event.intention"  class="list-group-metadata">
+              Your intention: {{event.intention.intention | capitalize}}
+            </p>
+            <br>
+            <div class="panel panel-default">
+              <div class="panel-body" style="overflow:hidden">
+                {{event.message}}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>

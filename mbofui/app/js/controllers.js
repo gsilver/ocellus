@@ -103,6 +103,7 @@ ocellus.controller('mapController', ['$compile', '$scope', '$rootScope','$filter
     }
   };
 
+
   // handles tap and hold on mobile and control-click on other devices
   // opens a popup invitation and passess the modal the lat and long
   $scope.$on("leafletDirectiveMap.contextmenu", function(event, args) {
@@ -259,6 +260,36 @@ ocellus.controller('mapController', ['$compile', '$scope', '$rootScope','$filter
       }
     });
   };
+(function(){
+  $('.detector:visible').each(function() {
+    $rootScope.vp = $( this ).attr('id');
+    console.log($rootScope.vp);
+  });
+  if($rootScope.vp !== 'vpdetxs'){
+    leafletData.getMap().then(function(map) {
+      map.on('popupopen', function(e) {
+        var marker = e.popup._source;
+        //e.popup.options.keepInView=true;
+        //e.popup.options.maxWidth=auto;
+        e.popup.options.autoPan=true;
+        e.popup.options.zoomAnimation=true;
+      });
+    });
+
+  }
+  else {
+    leafletData.getMap().then(function(map) {
+      map.on('popupopen', function(e) {
+        var marker = e.popup._source;
+        //e.popup.options.keepInView=true;
+        e.popup.options.maxWidth=200;
+        e.popup.options.autoPan=false;
+        e.popup.options.zoomAnimation=true;
+      });
+    });
+
+  }
+})();
 
   // watch for alerts produced by XHR errors and close any modal that may be open
   $scope.$watch("alert", function(text) {
