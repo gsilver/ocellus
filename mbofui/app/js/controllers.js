@@ -261,33 +261,25 @@ ocellus.controller('mapController', ['$compile', '$scope', '$rootScope','$filter
     });
   };
 (function(){
+  //if the marker dissapears from view (because of a change
+  // of orientation in a small device), correlate popup dissapears as well.
+
   $('.detector:visible').each(function() {
+    //examines the visibility of 4 bootstrapped
+    // reponsive utility classed spans (lg, md, sm, xs)
+    // and sets $rootScope.vp to the one that is visible
     $rootScope.vp = $( this ).attr('id');
-    console.log($rootScope.vp);
   });
-  if($rootScope.vp !== 'vpdetxs'){
+  //if the variable says it is a small viewport
+  // change the popup options to avoid popup dissapearing
+  if($rootScope.vp === 'vp_xs'){
     leafletData.getMap().then(function(map) {
       map.on('popupopen', function(e) {
         var marker = e.popup._source;
-        //e.popup.options.keepInView=true;
-        //e.popup.options.maxWidth=auto;
-        e.popup.options.autoPan=true;
-        e.popup.options.zoomAnimation=true;
-      });
-    });
-
-  }
-  else {
-    leafletData.getMap().then(function(map) {
-      map.on('popupopen', function(e) {
-        var marker = e.popup._source;
-        //e.popup.options.keepInView=true;
-        e.popup.options.maxWidth=200;
+        e.popup.options.maxWidth=230;
         e.popup.options.autoPan=false;
-        e.popup.options.zoomAnimation=true;
       });
     });
-
   }
 })();
 
